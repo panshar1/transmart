@@ -1,0 +1,5 @@
+{
+  "name": "Copy of TransSmart - Translation Management",
+  "description": "A web-based translation management system, inspired by platforms like POEditor and Transifex. It allows users to manage localization projects, add translation keys, and provide translations for multiple languages in a clean, modern interface.",
+  "requestFramePermissions": []
+}

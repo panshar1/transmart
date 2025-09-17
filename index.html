@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TransSmart - Translation Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'primary': '#1A2946', // Dark Navy, good for headers and text
+              'primary-hover': '#243656', // Lighter navy
+              'secondary': '#f8f9fa', // Very light gray for body background
+              'accent': '#0073E5', // Bright Blue for primary actions, active states
+              'accent-hover': '#005CBF', // Darker blue for hover
+              'info-bg': '#E6F2FA', // Light blue for panel headers
+              'border-color': '#dee2e6', // A standard border color
+              'header-bg': '#f1f3f5', // Light gray for table headers
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Apply gradient background */
+      .header-bar {
+        background: linear-gradient(90deg, #1a2458 0%, #2e3f85 50%, #0096c7 100%);
+        color: #ffffff !important;  /* force text/icons white */
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+      }
+
+      /* Ensure child text/icons are white */
+      .header-bar * {
+        color: #ffffff !important;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.16.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"
+  }
+}
+</script>
+</head>
+  <body class="bg-secondary text-slate-800">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
