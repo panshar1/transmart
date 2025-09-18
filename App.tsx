@@ -287,33 +287,28 @@ const calculateSimilarity = (str1: string, str2: string): number => {
 };
 
 const App: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>(() => {
-      const savedProjects = localStorage.getItem('translationProjects');
-      return savedProjects ? JSON.parse(savedProjects) : initialProjects;
-  });
-  const [translationJobs, setTranslationJobs] = useState<TranslationJob[]>(() => {
-      const savedJobs = localStorage.getItem('translationJobs');
-      return savedJobs ? JSON.parse(savedJobs) : initialJobs;
-  });
-  const [users, setUsers] = useState<User[]>(() => {
-      const savedUsers = localStorage.getItem('appUsers');
-      return savedUsers ? JSON.parse(savedUsers) : initialUsers;
-  });
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [translationJobs, setTranslationJobs] = useState<TranslationJob[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentView, setCurrentView] = useState<'dashboard' | 'projects' | 'users' | 'budget' | 'integrations'>('dashboard');
 
-  useEffect(() => {
-    localStorage.setItem('translationProjects', JSON.stringify(projects));
-  }, [projects]);
-
-  useEffect(() => {
-    localStorage.setItem('translationJobs', JSON.stringify(translationJobs));
-  }, [translationJobs]);
-
-  useEffect(() => {
-    localStorage.setItem('appUsers', JSON.stringify(users));
-  }, [users]);
+    // Fetch all data from backend on mount
+        useEffect(() => {
+            // Fetch projects
+            fetch('http://localhost:3001/api/projects')
+                .then(res => res.json())
+                .then(data => setProjects(data));
+            // Fetch jobs
+            fetch('http://localhost:3001/api/jobs')
+                .then(res => res.json())
+                .then(data => setTranslationJobs(data));
+            // Fetch users
+            fetch('http://localhost:3001/api/users')
+                .then(res => res.json())
+                .then(data => setUsers(data));
+        }, []);
   
   const handleLogin = (user: User) => {
     setCurrentUser(user);
@@ -326,27 +321,35 @@ const App: React.FC = () => {
   };
 
   const handleAddProject = useCallback((name: string, description: string, productGroup: string) => {
-    const newProject: Project = {
-      id: `proj-${Date.now()}`,
-      name,
-      description,
-      productGroup,
-      sourceLanguage: { name: 'English', code: 'en' },
-      targetLanguages: [],
-      terms: [],
-      glossary: [],
-      translationMemory: {},
-      createdAt: new Date().toISOString(),
-    };
-    setProjects(prev => [...prev, newProject]);
-  }, []);
+        const newProject = {
+            name,
+            description,
+            productGroup,
+            sourceLanguage: { name: 'English', code: 'en' },
+            targetLanguages: [],
+            terms: [],
+            glossary: [],
+            translationMemory: {},
+        };
+        fetch('http://localhost:3001/api/projects', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newProject)
+        })
+            .then(res => res.json())
+            .then(project => setProjects(prev => [...prev, project]));
+    }, []);
 
   const handleDeleteProject = useCallback((projectId: string) => {
-    setProjects(prev => prev.filter(p => p.id !== projectId));
-    if (selectedProjectId === projectId) {
-        setSelectedProjectId(null);
-    }
-  }, [selectedProjectId]);
+        fetch(`http://localhost:3001/api/projects/${projectId}`, {
+            method: 'DELETE'
+        }).then(() => {
+            setProjects(prev => prev.filter(p => p.id !== projectId));
+            if (selectedProjectId === projectId) {
+                setSelectedProjectId(null);
+            }
+        });
+    }, [selectedProjectId]);
 
   const handleAddLanguage = useCallback((projectId: string, name: string, code: string) => {
     setProjects(prev => prev.map(p => {
